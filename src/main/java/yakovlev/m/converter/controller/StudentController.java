@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import yakovlev.m.converter.model.EmailGenerator;
 import yakovlev.m.converter.model.PasswordGenerator;
 import yakovlev.m.converter.model.Student;
+import yakovlev.m.converter.model.Transliterator;
 
 @Component
 public class StudentController
@@ -13,24 +14,21 @@ public class StudentController
     private EmailGenerator emailGenerator;
     @Autowired
     private PasswordGenerator passwordGenerator;
+    @Autowired
+    private Transliterator transliterator;
 
-    public void fillStudentsFields(Student student)
+    public Student generateNewStudent(String uaFirstName, String uaLastName, String latinFirstName, String latinLastName, String email, String sPassword)
     {
-        if (student.getEmail() == null)
-        {
-            student.setEmail(emailGenerator.generateEmail(student));
-        }
-        if (student.getPassword() == null)
-        {
-            student.setPassword(passwordGenerator.generagePassword());
-        }
+        return new Student(latinFirstName, latinLastName, uaFirstName, uaLastName, email, sPassword);
     }
 
-    public Student generateNewStudent(String firstName, String lastName)
+    public Student generateNewStudent(String uaFirstName, String uaLastName)
     {
-        Student student = new Student(firstName, lastName);
+        Student student = new Student(uaFirstName, uaLastName);
+        student.setLatinFirstName(transliterator.translitOneWord(uaFirstName));
+        student.setLatinLastName(transliterator.translitOneWord(uaLastName));
         student.setEmail(emailGenerator.generateEmail(student));
         student.setPassword(passwordGenerator.generagePassword());
-        return null;
+        return student;
     }
 }

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import yakovlev.m.converter.model.Student;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -15,7 +16,10 @@ public class DatabaseController
 {
     @Autowired
     private ConnectionToDatabase connectionToDatabase;
+    @Autowired
+    private StudentController studentController;
 
+    //Список всех студентов из базы данных в виде сета
     public Set<Student> getAllStudents() {
         try (Statement statement = connectionToDatabase.getConnection().createStatement())
         {
@@ -23,9 +27,29 @@ public class DatabaseController
             return writeResultSet(resultSet);
         } catch (SQLException throwables)
         {
-            throwables.printStackTrace();
+            System.err.println("Got an exception!");
+            System.err.println(throwables.getMessage());
         }
         return null;
+    }
+
+    public void addNewStudent(Student student)
+    {
+        String query = " insert into students (latinFirstName, latinLastName, uaFirstName, uaLastName, email, sPassword)"
+                + " values (?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement statement = connectionToDatabase.getConnection().prepareStatement(query))
+        {
+            statement.setString (1, student.getLatinFirstName());
+            statement.setString (2, student.getLatinLastName());
+            statement.setString (3, student.getUaFirstName());
+            statement.setString (4, student.getUaLastName());
+            statement.setString (5, student.getEmail());
+            statement.setString (6, student.getPassword());
+            statement.execute();
+        } catch (SQLException throwables) {
+            System.err.println("Got an exception!");
+            System.err.println(throwables.getMessage());
+        }
     }
 
     private Set<Student> writeResultSet(ResultSet resultSet) throws SQLException
@@ -40,12 +64,14 @@ public class DatabaseController
 
     private Student studentObjectFormer(ResultSet resultSet) throws SQLException
     {
-        String firstName = resultSet.getString("firstName");
-        String lastName = resultSet.getString("lastName");
+        String latinFirstName = resultSet.getString("latinFirstName");
+        String latinLastName = resultSet.getString("latinLastName");
+        String uaFirstName = resultSet.getString("uaFirstName");
+        String uaLastName = resultSet.getString("uaLastName");
         String email = resultSet.getString("email");
         String sPassword = resultSet.getString("sPassword");
-        System.out.println(firstName + "\t" + lastName + "\t" + email + "\t" + sPassword);
-        return new Student(firstName, lastName, email, sPassword);
-
+        Student student = studentController.generateNewStudent(latinFirstName, latinLastName, uaFirstName, uaLastName, email, sPassword);
+        System.out.println(student.toString());
+        return student;
     }
 }

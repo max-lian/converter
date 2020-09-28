@@ -19,7 +19,7 @@ public class CSVController
 {
     @Autowired
     private DatabaseController databaseController;
-    private String[] headerString = new String[]{"First name", "Last name", "Password", "Email"};
+    private String[] headerString = new String[]{"Ukrainian first name", "Ukrainian last name", "Latin first name", "Latin last name", "Password", "Email"};
 
     public void generateCSVStidentsFile()
     {
@@ -45,7 +45,7 @@ public class CSVController
 
     private String[] parseStudentToStringArray(Student student)
     {
-        return new String[]{student.getFirstName(), student.getLastName(), student.getPassword(), student.getEmail()};
+        return new String[]{student.getUaFirstName(), student.getUaLastName(),student.getLatinFirstName(),student.getLatinLastName(), student.getPassword(), student.getEmail()};
     }
 
     private String convertToCSV(String[] data)

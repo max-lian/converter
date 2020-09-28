@@ -3,46 +3,82 @@ package yakovlev.m.converter.model;
 import org.springframework.stereotype.Component;
 
 public class Student {
-    private String firstName;
-    private String lastName;
+    private String latinFirstName;
+    private String latinLastName;
+    private String uaFirstName;
+    private String uaLastName;
     private String email;
     private String password;
 
-    public Student(String firstName, String lastName, String email, String password)
-    {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public Student(String uaFirstName, String uaLastName) {
+        this.uaFirstName = uaFirstName;
+        this.uaLastName = uaLastName;
+    }
+
+    public Student(String latinFirstName, String latinLastName, String uaFirstName, String uaLastName, String email, String password) {
+        this.latinFirstName = latinFirstName;
+        this.latinLastName = latinLastName;
+        this.uaFirstName = uaFirstName;
+        this.uaLastName = uaLastName;
         this.email = email;
         this.password = password;
     }
 
-    public Student(String firstName, String lastName) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public String getUaFirstName() {
+        return uaFirstName;
     }
 
-    public String getFirstName() { return firstName; }
+    public void setUaFirstName(String uaFirstName) {
+        this.uaFirstName = uaFirstName;
+    }
 
-    public void setFirstName(String firstName) { this.firstName = firstName; }
+    public String getUaLastName() {
+        return uaLastName;
+    }
 
-    public String getLastName() { return lastName; }
+    public void setUaLastName(String uaLastName) {
+        this.uaLastName = uaLastName;
+    }
 
-    public void setLastName(String lastName) { this.lastName = lastName; }
+    public String getLatinFirstName() {
+        return latinFirstName;
+    }
 
-    public String getEmail() { return email; }
+    public void setLatinFirstName(String latinFirstName) {
+        this.latinFirstName = latinFirstName;
+    }
 
-    public void setEmail(String email) { this.email = email; }
+    public String getLatinLastName() {
+        return latinLastName;
+    }
 
-    public String getPassword() { return password; }
+    public void setLatinLastName(String latinLastName) {
+        this.latinLastName = latinLastName;
+    }
 
-    public void setPassword(String password) { this.password = password; }
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "Student{" +
-                "firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
+                "latinFirstName='" + latinFirstName + '\'' +
+                ", latinLastName='" + latinLastName + '\'' +
+                ", uaFirstName='" + uaFirstName + '\'' +
+                ", uaLastName='" + uaLastName + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 '}';
