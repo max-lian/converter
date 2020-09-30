@@ -17,7 +17,7 @@ public class StudentController
     @Autowired
     private Transliterator transliterator;
 
-    public Student generateNewStudent(String uaFirstName, String uaLastName, String latinFirstName, String latinLastName, String email, String sPassword)
+    public Student generateNewStudent(String latinFirstName, String latinLastName, String uaFirstName, String uaLastName,  String email, String sPassword)
     {
         return new Student(latinFirstName, latinLastName, uaFirstName, uaLastName, email, sPassword);
     }
@@ -25,8 +25,8 @@ public class StudentController
     public Student generateNewStudent(String uaFirstName, String uaLastName)
     {
         Student student = new Student(uaFirstName, uaLastName);
-        student.setLatinFirstName(transliterator.translitOneWord(uaFirstName));
-        student.setLatinLastName(transliterator.translitOneWord(uaLastName));
+        student.setLatinFirstName(transliterator.toTranslate(uaFirstName));
+        student.setLatinLastName(transliterator.toTranslate(uaLastName));
         student.setEmail(emailGenerator.generateEmail(student));
         student.setPassword(passwordGenerator.generagePassword());
         return student;

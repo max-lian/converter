@@ -19,7 +19,7 @@ public class CSVController
 {
     @Autowired
     private DatabaseController databaseController;
-    private String[] headerString = new String[]{"Ukrainian first name", "Ukrainian last name", "Latin first name", "Latin last name", "Password", "Email"};
+    private String[] headerString = new String[]{"Latin first name", "Latin last name", "Ukrainian first name", "Ukrainian last name",  "Password", "Email"};
 
     public void generateCSVStidentsFile()
     {

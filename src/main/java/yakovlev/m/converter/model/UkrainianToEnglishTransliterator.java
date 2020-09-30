@@ -6,7 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class UkrainianToEnglishTransliterator implements Transliterator {
+public class UkrainianToEnglishTransliterator implements Transliterator
+{
     private final Map<String, String> letters = new HashMap<String, String>();
     {
         letters.put("А", "A");
@@ -75,19 +76,40 @@ public class UkrainianToEnglishTransliterator implements Transliterator {
         letters.put("я", "ia");
     }
 
-    public String translitOneWord(String text) {
+    @Override
+    public String toTranslate(String text)
+    {
+        String[] subStr;
+        subStr = text.split(" ");
+        int substrLenght = subStr.length;
+        String resString = "";
+        for (String str: subStr)
+        {
+            resString = resString.concat(translitOneWord(str));
+            if (substrLenght > 1) resString = resString + " ";
+            substrLenght--;
+        }
+        return resString;
+    }
+
+    private String translitOneWord(String text)
+    {
         text.replace("зг", "zgh");
         text.replace("Зг", "Zgh");
         StringBuilder sb = new StringBuilder(text.length());
-        for (int i = 0; i<text.length(); i++) {
+        for (int i = 0; i<text.length(); i++)
+        {
             String l = text.substring(i, i+1);
-            if (letters.containsKey(l)) {
-                if(!l.equals("'") && !l.equals("ь")) sb.append(letters.get(l));
+            if (letters.containsKey(l))
+            {
+                sb.append(letters.get(l));
             }
             else {
-                sb.append(l);
+                if((!l.equals("'")) && (!l.equals("ь"))) sb.append(l);
             }
         }
         return sb.toString();
     }
+
+
 }

@@ -1,5 +1,5 @@
 package yakovlev.m.converter.model;
 
 public interface Transliterator {
-    public String translitOneWord(String text);
+    public String toTranslate(String text);
 }

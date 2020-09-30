@@ -15,6 +15,6 @@ public class StandartEmailGenerator implements EmailGenerator
     @Override
     public String generateEmail(Student student)
     {
-        return student.getLatinFirstName().toLowerCase() + "." + student.getLatinLastName().toLowerCase() + "@sumdu.edu.ua";
+        return student.getLatinFirstName().split(" ")[0].toLowerCase() + "." + student.getLatinLastName().toLowerCase() + "@sumdu.edu.ua";
     }
 }
