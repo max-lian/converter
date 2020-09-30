@@ -7,6 +7,8 @@ import yakovlev.m.converter.model.PasswordGenerator;
 import yakovlev.m.converter.model.Student;
 import yakovlev.m.converter.model.Transliterator;
 
+import java.sql.SQLException;
+
 @Component
 public class StudentController
 {
@@ -22,7 +24,7 @@ public class StudentController
         return new Student(latinFirstName, latinLastName, uaFirstName, uaLastName, email, sPassword);
     }
 
-    public Student generateNewStudent(String uaFirstName, String uaLastName)
+    public Student generateNewStudent(String uaFirstName, String uaLastName) throws SQLException
     {
         Student student = new Student(uaFirstName, uaLastName);
         student.setLatinFirstName(transliterator.toTranslate(uaFirstName));

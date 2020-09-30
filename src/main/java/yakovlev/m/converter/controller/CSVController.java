@@ -7,6 +7,9 @@ import yakovlev.m.converter.model.Student;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
 import java.sql.Struct;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +24,7 @@ public class CSVController
     private DatabaseController databaseController;
     private String[] headerString = new String[]{"Latin first name", "Latin last name", "Ukrainian first name", "Ukrainian last name",  "Password", "Email"};
 
-    public void generateCSVStidentsFile()
-    {
+    public void generateCSVStidentsFile() throws FileNotFoundException, SQLException {
         Set<Student> students = databaseController.getAllStudents();
         List<String[]> studentsStrings = new ArrayList<String[]>();
         studentsStrings.add(headerString);
@@ -31,21 +33,15 @@ public class CSVController
             studentsStrings.add(parseStudentToStringArray(student));
         }
         File csvOutputFile = new File("studentsList.csv");
-        try (PrintWriter pw = new PrintWriter(csvOutputFile))
-        {
-            studentsStrings.stream()
-                    .map(this::convertToCSV)
-                    .forEach(pw::println);
-        } catch (FileNotFoundException e)
-        {
-            e.printStackTrace();
-        }
+        PrintWriter pw = new PrintWriter(csvOutputFile);
+        studentsStrings.stream()
+                .map(this::convertToCSV)
+                .forEach(pw::println);
         //assertTrue(csvOutputFile.exists());
     }
 
-    private String[] parseStudentToStringArray(Student student)
-    {
-        return new String[]{student.getUaFirstName(), student.getUaLastName(),student.getLatinFirstName(),student.getLatinLastName(), student.getPassword(), student.getEmail()};
+    private String[] parseStudentToStringArray(Student student)  {
+        return new String[]{student.getLatinFirstName(),student.getLatinLastName(), student.getUaFirstName(), student.getUaLastName(), student.getPassword(), student.getEmail()};
     }
 
     private String convertToCSV(String[] data)
