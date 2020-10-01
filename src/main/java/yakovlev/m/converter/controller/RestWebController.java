@@ -22,21 +22,25 @@ public class RestWebController
     private CSVController cvsController;
     @Autowired
     private StudentController studentController;
-    private static Logger LOG = LoggerFactory.getLogger(RestWebController.class);
+    private static final Logger INFOLOG = LoggerFactory.getLogger(RestWebController.class);
+    private static final Logger ERRORLOG = LoggerFactory.getLogger("errorlog");
 
-    @GetMapping("/findstudent")
+
+    @RequestMapping(value = "/findstudent", method = RequestMethod.GET)
     public String getStudentsByUaFirstAndLastName(@RequestParam String uaFirstName, @RequestParam String uaLastName)
     {
         try
         {
+            INFOLOG.info("Try to find student: " + uaFirstName + "\t" + uaLastName);
             Set<Student> students = databaseController.findStudents(uaFirstName, uaLastName);
             Gson gson = new Gson();
             String jsonString = gson.toJson(students);
+            INFOLOG.info("Student " + uaFirstName + " " + uaLastName + " was finded");
             return jsonString;
         }
         catch (SQLException ex){
-            LOG.error(ex.getMessage());
-            return "SQLException";
+            ERRORLOG.error(ex.getMessage());
+            return "500 SQLException";
         }
     }
 
@@ -46,13 +50,15 @@ public class RestWebController
     {
         try
         {
+            INFOLOG.info("Try to add student: " + uaFirstName + "\t" + uaLastName);
             Student student = studentController.generateNewStudent(uaFirstName, uaLastName);
             databaseController.addNewStudent(student);
-            return "Student added";
+            INFOLOG.info("Student " + uaFirstName + " " + uaLastName + " was added");
+            return "200 Student added";
         }
         catch (SQLException ex){
-            LOG.error(ex.getMessage());
-            return "SQLException";
+            ERRORLOG.error(ex.getMessage());
+            return "500 SQLException";
         }
     }
 
@@ -67,25 +73,26 @@ public class RestWebController
             return jsonString;
         }
         catch (SQLException ex){
-            LOG.error(ex.getMessage());
-            return "SQLException";
+            ERRORLOG.error(ex.getMessage());
+            return "500 SQLException";
         }
     }
 
     @GetMapping("/generateCSV")
     public String generateCSVFile()
     {
+        INFOLOG.info("Generating CSVFile");
         try {
             cvsController.generateCSVStidentsFile();
         }
         catch (SQLException ex) {
-            LOG.error(ex.getMessage());
-            return "SQLException";
+            ERRORLOG.error(ex.getMessage());
+            return "500 SQLException";
         }
         catch (FileNotFoundException ex){
-            LOG.error(ex.getMessage());
-            return "FileNotFoundException";
+            ERRORLOG.error(ex.getMessage());
+            return "500 FileNotFoundException";
         }
-        return "OK";
+        return "200 OK";
     }
 }

@@ -14,6 +14,7 @@ public class ConverterApplication {
     private DatabaseController databaseController;
 
     public static void main(String[] args) {
+
         SpringApplication.run(ConverterApplication.class, args);
     }
 
