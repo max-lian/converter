@@ -1,5 +1,7 @@
 package yakovlev.m.converter.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -35,6 +37,7 @@ public class CSVController
     @Value("${csvcontroller.outputFilePath}")
     private String outputFilePath;
 
+    private static final Logger ERRORLOG = LoggerFactory.getLogger("errorlog");
     private String[] headerString = new String[]{"First Name [Required]", "Last Name [Required]", "Email Address [Required]", "Password [Required]", "Password Hash Function [UPLOAD ONLY]", "Org Unit Path [Required]", "New Primary Email [UPLOAD ONLY]", "Recovery Email", "Home Secondary Email", "Work Secondary Email", "Recovery Phone [MUST BE IN THE E.164 FORMAT]", "Work Phone", "Home Phone", "Mobile Phone", "Work Address", "Home Address", "Employee ID", "Employee Type", "Employee Title", "Manager Email", "Department", "Cost Center", "Building ID", "Floor Name", "Floor Section", "Change Password at Next Sign-In", "New Status [UPLOAD ONLY]"
 };
 
@@ -53,18 +56,22 @@ public class CSVController
         pw.close();
     }
 
-    public void readCSVStudentsFile() throws IOException, SQLException {
-        System.out.println(inputFilePath);
+    public void readCSVStudentsFile() throws IOException{
         BufferedReader csvReader = new BufferedReader(new FileReader(inputFilePath));
         String row = "";
-        while ((row = csvReader.readLine()) != null)
-        {
-            String[] splitedRow = row.split(" ");
-            String firstName = splitedRow[1];
-            for(int i = 2; i < splitedRow.length; i++) firstName = firstName.concat(" " + splitedRow[i]);
-            databaseController.addNewStudent(studentFabric.generateNewStudent(firstName, splitedRow[0]));
-        }
-        csvReader.close();
+
+            while ((row = csvReader.readLine()) != null) {
+                String[] splitedRow = row.split(" ");
+                String firstName = splitedRow[1];
+                for (int i = 2; i < splitedRow.length; i++) firstName = firstName.concat(" " + splitedRow[i]);
+                try {
+                    databaseController.addNewStudent(studentFabric.generateNewStudent(firstName, splitedRow[0]));
+                }catch (SQLException ex){
+                    ERRORLOG.error(ex.getMessage());
+                }
+            }
+            csvReader.close();
+
     }
 
 

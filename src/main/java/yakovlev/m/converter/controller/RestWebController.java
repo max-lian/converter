@@ -99,12 +99,15 @@ public class RestWebController
 
     @GetMapping("/readCSV")
     public String readCSVFile(){
+        long startTime = System.currentTimeMillis();
         try {
             cvsController.readCSVStudentsFile();
         } catch (Exception ex) {
             ERRORLOG.error(ex.getMessage());
             return "500";
         }
-        return "200 OK";
+        long endTime = System.currentTimeMillis();
+        INFOLOG.info("Milliseconds to read CSV file: " + (endTime - startTime) + " ms;");
+        return "200 OK; ";
     }
 }

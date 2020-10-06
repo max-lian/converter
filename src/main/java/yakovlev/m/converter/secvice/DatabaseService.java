@@ -41,6 +41,11 @@ public class DatabaseService
 
     public void addNewStudent(Student student) throws SQLException
     {
+        List<Student> studentList = findStudents(student.getUaFirstName(), student.getUaLastName());
+
+        //Для избежания колизии имени и фамилии в БД
+        if (!studentList.isEmpty()) throw new SQLException("Database has student with the name: " + student.getUaLastName() + " " + student.getUaFirstName());
+
         String query = " insert into students (latinFirstName, latinLastName, uaFirstName, uaLastName, email, sPassword)"
                 + " values (?, ?, ?, ?, ?, ?)";
         PreparedStatement statement = connectionToDatabase.getConnection().prepareStatement(query);
