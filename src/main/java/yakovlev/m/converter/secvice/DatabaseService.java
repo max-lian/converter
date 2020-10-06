@@ -1,40 +1,38 @@
-package yakovlev.m.converter.controller;
+package yakovlev.m.converter.secvice;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import yakovlev.m.converter.controller.ConnectionToDatabase;
 import yakovlev.m.converter.model.Student;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
-public class DatabaseController
+public class DatabaseService
 {
     @Autowired
     private ConnectionToDatabase connectionToDatabase;
-    @Autowired
-    private StudentController studentController;
 
     //Список всех студентов из базы данных в виде сета
-    public Set<Student> getAllStudents() throws SQLException{
+    public List<Student> getAllStudents() throws SQLException{
         Statement statement = connectionToDatabase.getConnection().createStatement();
         ResultSet resultSet = statement.executeQuery("select * from students");
         return writeResultSet(resultSet);
-
     }
 
     //Поиск студентов по email
-    public Set<Student> findStudents(String email) throws SQLException{
+    public List<Student> findStudents(String email) throws SQLException{
        Statement statement = connectionToDatabase.getConnection().createStatement();
        ResultSet resultSet = statement.executeQuery(String.format("select * from students where email = '%s'", email));
        return writeResultSet(resultSet);
     }
 
-    public Set<Student> findStudents(String uaFirstName, String uaLastName) throws SQLException{
+    public List<Student> findStudents(String uaFirstName, String uaLastName) throws SQLException{
         Statement statement = connectionToDatabase.getConnection().createStatement();
         ResultSet resultSet = statement.executeQuery(
                 String.format("select * from students where uaFirstName = '%s' and uaLastName = '%s'", uaFirstName, uaLastName));
@@ -55,9 +53,9 @@ public class DatabaseController
         statement.execute();
     }
 
-    private Set<Student> writeResultSet(ResultSet resultSet) throws SQLException
+    private List<Student> writeResultSet(ResultSet resultSet) throws SQLException
     {
-        Set<Student> students = new HashSet<>();
+        List<Student> students = new ArrayList<>();
         while (resultSet.next())
         {
             students.add(studentObjectFormer(resultSet));
@@ -73,7 +71,14 @@ public class DatabaseController
         String uaLastName = resultSet.getString("uaLastName");
         String email = resultSet.getString("email");
         String sPassword = resultSet.getString("sPassword");
-        Student student = studentController.generateNewStudent(latinFirstName, latinLastName, uaFirstName, uaLastName, email, sPassword);
+        Student student = Student.builder()
+                .setUaFirstName(uaFirstName)
+                .setUaLastName(uaLastName)
+                .setLatinFirstName(latinFirstName)
+                .setLatinLastName(latinLastName)
+                .setEmail(email)
+                .setPassword(sPassword)
+                .build();;
         //System.out.println(student.toString());
         return student;
     }

@@ -1,8 +1,9 @@
 package yakovlev.m.converter.model;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import yakovlev.m.converter.controller.DatabaseController;
+import yakovlev.m.converter.secvice.DatabaseService;
 
 import java.sql.SQLException;
 
@@ -10,24 +11,20 @@ import java.sql.SQLException;
 public class StandartEmailGenerator implements EmailGenerator
 {
     @Autowired
-    private DatabaseController databaseController;
-    private String domen = "@sumdu.edu.ua";
-    @Override
-    public String generateEmail(String firstName, String lastName)
-    {
-        return firstName + "." + lastName + "@sumdu.edu.ua";
-    }
+    private DatabaseService databaseController;
+
+    @Value("${email.domen}")
+    private String domen;
 
     @Override
-    public String generateEmail(Student student) throws SQLException
-    {
+    public String generateEmail(String firstName, String lastName) throws SQLException {
         int count = 1;
-        String email = student.getLatinFirstName().split(" ")[0].toLowerCase() + "." + student.getLatinLastName().toLowerCase();
+        String email = firstName.split(" ")[0].toLowerCase() + "." + lastName.toLowerCase();
         if (databaseController.findStudents(email + domen).isEmpty()) return email + domen;
         else
-            {
+        {
             while (!databaseController.findStudents(email + count + domen).isEmpty()) count++;
-            }
-            return email + count + domen;
+        }
+        return email + count + domen;
     }
 }

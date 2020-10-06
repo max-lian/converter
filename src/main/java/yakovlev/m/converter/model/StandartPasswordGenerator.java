@@ -2,7 +2,6 @@ package yakovlev.m.converter.model;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Component;
-import java.util.Random;
 
 @Component
 public class StandartPasswordGenerator implements PasswordGenerator

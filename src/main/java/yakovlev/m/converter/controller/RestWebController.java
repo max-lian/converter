@@ -6,22 +6,23 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import yakovlev.m.converter.model.Student;
+import yakovlev.m.converter.model.StudentFabric;
+import yakovlev.m.converter.secvice.DatabaseService;
 
 import java.io.FileNotFoundException;
-import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
-import java.util.Set;
+import java.util.List;
 
 @RestController
 //@RequestMapping("/")
 public class RestWebController
 {
     @Autowired
-    private DatabaseController databaseController;
+    private DatabaseService databaseController;
     @Autowired
     private CSVController cvsController;
     @Autowired
-    private StudentController studentController;
+    private StudentFabric studentFabric;
     private static final Logger INFOLOG = LoggerFactory.getLogger(RestWebController.class);
     private static final Logger ERRORLOG = LoggerFactory.getLogger("errorlog");
 
@@ -32,7 +33,7 @@ public class RestWebController
         try
         {
             INFOLOG.info("Try to find student: " + uaFirstName + "\t" + uaLastName);
-            Set<Student> students = databaseController.findStudents(uaFirstName, uaLastName);
+            List<Student> students = databaseController.findStudents(uaFirstName, uaLastName);
             Gson gson = new Gson();
             String jsonString = gson.toJson(students);
             INFOLOG.info("Student " + uaFirstName + " " + uaLastName + " was finded");
@@ -51,7 +52,7 @@ public class RestWebController
         try
         {
             INFOLOG.info("Try to add student: " + uaFirstName + "\t" + uaLastName);
-            Student student = studentController.generateNewStudent(uaFirstName, uaLastName);
+            Student student = studentFabric.generateNewStudent(uaFirstName, uaLastName);
             databaseController.addNewStudent(student);
             INFOLOG.info("Student " + uaFirstName + " " + uaLastName + " was added");
             return "200 Student added";
@@ -67,7 +68,7 @@ public class RestWebController
     {
         try
         {
-            Set<Student> students = databaseController.getAllStudents();
+            List<Student> students = databaseController.getAllStudents();
             Gson gson = new Gson();
             String jsonString = gson.toJson(students);
             return jsonString;
@@ -83,7 +84,7 @@ public class RestWebController
     {
         INFOLOG.info("Generating CSVFile");
         try {
-            cvsController.generateCSVStidentsFile();
+            cvsController.generateCSVStudentsFile();
         }
         catch (SQLException ex) {
             ERRORLOG.error(ex.getMessage());
@@ -92,6 +93,17 @@ public class RestWebController
         catch (FileNotFoundException ex){
             ERRORLOG.error(ex.getMessage());
             return "500 FileNotFoundException";
+        }
+        return "200 OK";
+    }
+
+    @GetMapping("/readCSV")
+    public String readCSVFile(){
+        try {
+            cvsController.readCSVStudentsFile();
+        } catch (Exception ex) {
+            ERRORLOG.error(ex.getMessage());
+            return "500";
         }
         return "200 OK";
     }

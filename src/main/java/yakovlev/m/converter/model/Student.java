@@ -1,7 +1,5 @@
 package yakovlev.m.converter.model;
 
-import org.springframework.stereotype.Component;
-
 public class Student {
     private String latinFirstName;
     private String latinLastName;
@@ -10,18 +8,36 @@ public class Student {
     private String email;
     private String password;
 
-    public Student(String uaFirstName, String uaLastName) {
-        this.uaFirstName = uaFirstName;
-        this.uaLastName = uaLastName;
+    public Student() { }
+
+    private Student(Builder builder) {
+        this.latinFirstName = builder.latinFirstName;
+        this.latinLastName = builder.latinLastName;
+        this.uaFirstName = builder.uaFirstName;
+        this.uaLastName = builder.uaLastName;
+        this.email = builder.email;
+        this.password = builder.password;
     }
 
-    public Student(String latinFirstName, String latinLastName, String uaFirstName, String uaLastName, String email, String password) {
+    public static Builder builder() {
+        return new Builder();
+    }
+
+
+    public String getLatinFirstName() {
+        return latinFirstName;
+    }
+
+    private void setLatinFirstName(String latinFirstName) {
         this.latinFirstName = latinFirstName;
+    }
+
+    public String getLatinLastName() {
+        return latinLastName;
+    }
+
+    public void setLatinLastName(String latinLastName) {
         this.latinLastName = latinLastName;
-        this.uaFirstName = uaFirstName;
-        this.uaLastName = uaLastName;
-        this.email = email;
-        this.password = password;
     }
 
     public String getUaFirstName() {
@@ -38,22 +54,6 @@ public class Student {
 
     public void setUaLastName(String uaLastName) {
         this.uaLastName = uaLastName;
-    }
-
-    public String getLatinFirstName() {
-        return latinFirstName;
-    }
-
-    public void setLatinFirstName(String latinFirstName) {
-        this.latinFirstName = latinFirstName;
-    }
-
-    public String getLatinLastName() {
-        return latinLastName;
-    }
-
-    public void setLatinLastName(String latinLastName) {
-        this.latinLastName = latinLastName;
     }
 
     public String getEmail() {
@@ -82,5 +82,62 @@ public class Student {
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 '}';
+    }
+
+
+    public static class Builder {
+        private String latinFirstName;
+        private String latinLastName;
+        private String uaFirstName;
+        private String uaLastName;
+        private String email;
+        private String password;
+
+        private Builder() {
+        }
+
+        public Builder setLatinFirstName(String latinFirstName) {
+            this.latinFirstName = latinFirstName;
+            return this;
+        }
+
+        public Builder setLatinLastName(String latinLastName) {
+            this.latinLastName = latinLastName;
+            return this;
+        }
+
+        public Builder setUaFirstName(String uaFirstName) {
+            this.uaFirstName = uaFirstName;
+            return this;
+        }
+
+        public Builder setUaLastName(String uaLastName) {
+            this.uaLastName = uaLastName;
+            return this;
+        }
+
+        public Builder setEmail(String email) {
+            this.email = email;
+            return this;
+        }
+
+        public Builder setPassword(String password) {
+            this.password = password;
+            return this;
+        }
+
+        public Builder of(Student student) {
+            this.latinFirstName = student.latinFirstName;
+            this.latinLastName = student.latinLastName;
+            this.uaFirstName = student.uaFirstName;
+            this.uaLastName = student.uaLastName;
+            this.email = student.email;
+            this.password = student.password;
+            return this;
+        }
+
+        public Student build() {
+            return new Student(this);
+        }
     }
 }
